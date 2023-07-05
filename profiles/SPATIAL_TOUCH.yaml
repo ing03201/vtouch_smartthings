@@ -1,0 +1,5 @@
+name: SPATIAL_TOUCH
+components:
+  - id: main
+    capabilities: 
+      
