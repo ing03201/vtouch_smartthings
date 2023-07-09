@@ -1,0 +1,67 @@
+id: talentautumn23825.vtouch
+version: 1
+status: proposed
+name: VTouch
+ephemeral: false
+attributes:
+  x:
+    schema:
+      type: object
+      properties:
+        value:
+          type: number
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+  'y':
+    schema:
+      type: object
+      properties:
+        value:
+          type: number
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+  z:
+    schema:
+      type: object
+      properties:
+        value:
+          type: number
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+  trigger:
+    schema:
+      type: object
+      properties:
+        value:
+          type: string
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+  object:
+    schema:
+      type: object
+      properties:
+        value:
+          type: string
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+  direction:
+    schema:
+      type: object
+      properties:
+        value:
+          type: string
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+commands: {}
