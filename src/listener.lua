@@ -28,7 +28,7 @@ local RECONNECT_PERIOD = 120 -- 2 min
 --- @module bose.Listener
 local Listener = {}
 Listener.__index = Listener
-Listener.WS_PORT = 8080
+Listener.WS_PORT = 20000
 
 function Listener:presets_update(presets)
   log.info(
