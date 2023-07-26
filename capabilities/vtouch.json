@@ -1,0 +1,126 @@
+{
+    "name": "VTouch",
+    "status": "live",
+    "attributes": {
+        "object": {
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "value": {
+                        "title": "object",
+                        "type": "string",
+                        "maxLength": 255
+                    }
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        },
+        "eye": {
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": -10000.0,
+                        "maximum": 10000.0
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        },
+        "finger": {
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": -10000.0,
+                        "maximum": 10000.0
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        },
+        "objXY":{
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": -10000.000000,
+                        "maximum": 10000.000000
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        },
+        "trigger": {
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "value": {
+                        "title": "object",
+                        "type": "string",
+                        "enum" :[
+                            "N",
+                            "S",
+                            "C",
+                            "SC",
+                            "RO",
+                            "SW"
+                        ]
+                    }
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        },
+        "direction": {
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "value": {
+                        "title": "object",
+                        "type": "string",
+                        "enum" :[
+                            "N",
+                            "L",
+                            "R",
+                            "CW",
+                            "CCW"
+                        ]
+                    }
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        }
+    },
+    "id": "vtouch",
+    "version": 1
+}
