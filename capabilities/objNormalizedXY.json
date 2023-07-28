@@ -1,0 +1,37 @@
+{
+    "id": "earthbench45333.objNormalizedXY",
+    "version": 1,
+    "status": "proposed",
+    "name": "objNormalizedXY",
+    "attributes": {
+        "XY": {
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "value": {
+                        "type": "array",
+                        "items": {
+                            "type": "number",
+                            "minimum": -10000.000000,
+                            "maximum": 10000.000000
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                    },
+                    "unit": {
+                        "type": "string",
+                        "enum": [
+                            "mm"
+                        ],
+                        "default": "mm"
+                    }
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        }
+    },
+    "commands": {}
+}

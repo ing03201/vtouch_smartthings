@@ -1,0 +1,37 @@
+{
+    "id": "earthbench45333.eye",
+    "version": 1,
+    "status": "proposed",
+    "name": "eye",
+    "attributes": {
+        "eye": {
+            "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "value": {
+                        "type": "array",
+                        "items": {
+                            "type": "number",
+                            "minimum": -10000.000000,
+                            "maximum": 10000.000000
+                        },
+                        "minItems": 3,
+                        "maxItems": 3
+                    },
+                    "unit": {
+                        "type": "string",
+                        "enum": [
+                            "mm"
+                        ],
+                        "default": "mm"
+                    }
+                },
+                "required": [
+                    "value"
+                ]
+            }
+        }
+    },
+    "commands": {}
+}

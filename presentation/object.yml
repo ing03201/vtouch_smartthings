@@ -1,0 +1,22 @@
+dashboard:
+  states:
+    - label: '{{object.value}}'
+      alternatives: null
+  actions: []
+  basicPlus: []
+detailView:
+  - label: 'Current Object'
+    displayType: state
+    state: 
+      value: object.value
+      label: '{{object.value}}'
+      alternatives: null
+automation:
+  conditions:
+    - label: 'Current Object'
+      displayType: textField
+      textField:
+        value: object.value
+  actions: []
+id: earthbench45333.object
+version: 1

@@ -1,0 +1,26 @@
+{
+    "id": "earthbench45333.object",
+    "version": 1,
+    "status": "proposed",
+    "name": "object",
+    "ephemeral": false,
+    "attributes": {
+        "object": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string",
+                        "maxLength": 255
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "value"
+                ]
+            },
+            "enumCommands": []
+        }
+    },
+    "commands": {}
+}

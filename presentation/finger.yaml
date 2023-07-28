@@ -1,0 +1,15 @@
+dashboard:
+  states:
+    - label: '{{finger.value}}'
+      alternatives: null
+  actions: []
+  basicPlus: []
+detailView:
+  - label: 'Current finger'
+    displayType: state
+    state: 
+      value: finger.value
+      label: '{{finger.value}}'
+
+id: earthbench45333.finger
+version: 1

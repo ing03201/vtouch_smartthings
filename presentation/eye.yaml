@@ -1,0 +1,15 @@
+dashboard:
+  states:
+    - label: '{{eye.value}}'
+      alternatives: null
+  actions: []
+  basicPlus: []
+detailView:
+  - label: 'Current eye'
+    displayType: state
+    state: 
+      value: eye.value
+      label: '{{eye.value}}'
+
+id: earthbench45333.eye
+version: 1

@@ -1,0 +1,33 @@
+{
+    "id": "earthbench45333.direction",
+    "version": 1,
+    "status": "proposed",
+    "name": "direction",
+    "ephemeral": false,
+    "attributes": {
+        "direction": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "enum" : [
+                            "N",
+                            "L",
+                            "R",
+                            "CW",
+                            "CCW"
+                        ]
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "value"
+                ]
+            },
+            "enumCommands": []
+        }
+    },
+    "commands": {}
+}

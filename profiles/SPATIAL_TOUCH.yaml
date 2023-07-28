@@ -4,10 +4,21 @@ components:
     capabilities:
       - id: refresh
         version: 1
-      - id: talentautumn23825.vtouch
+      - id: earthbench45333.object
+        version: 1
+      - id: earthbench45333.eye
+        version: 1
+      - id: earthbench45333.finger
+        version: 1
+      - id: earthbench45333.objnormalizedxy
+        version: 1
+      - id: earthbench45333.trigger
+        version: 1
+      - id: earthbench45333.direction
         version: 1
     categories:
-      - name: Others
+      - name: VTouch
+      - categoryType : manufacturer
 
 preferences:
   - title: "LAN Device Name"
@@ -29,4 +40,4 @@ preferences:
       stringType: text
       minLength: 7
       maxLength: 15
-      default: "192.168.1.n"
+      default: "192.168.137.100"

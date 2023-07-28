@@ -1,0 +1,34 @@
+{
+    "id": "earthbench45333.trigger",
+    "version": 1,
+    "status": "proposed",
+    "name": "trigger",
+    "ephemeral": false,
+    "attributes": {
+        "trigger": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "enum" : [
+                            "N",
+                            "S",
+                            "C",
+                            "SC",
+                            "RO",
+                            "SW"
+                        ]
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "value"
+                ]
+            },
+            "enumCommands": []
+        }
+    },
+    "commands": {}
+}
