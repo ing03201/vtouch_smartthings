@@ -5,425 +5,90 @@
       "states": [
         {
           "component": "main",
-          "capability": "earthbench45333.trigger",
-          "version" : 1,
-          "values": [
-
-          ]
-        },
-        {
-          "component": "object",
           "capability": "earthbench45333.object",
           "version" : 1,
           "values": "object.value"
+        },
+        {
+          "component" : "trigger",
+          "capability" : "earthbench45333.trigger",
+          "version" : 1,
+          "values" : "trigger.value"
+
+        },
+        {
+          "component" : "direction",
+          "capability" : "earthbench45333.direction",
+          "version" : 1,
+          "values" : "direction.value"
         }
       ]
     },
     "detailView": [
       {
-        "label": "Front door",
-        "displayType": "toggleSwitch",
-        "toggleSwitch": {
-          "command": {
-            "name": "setLock",
-            "on": "locked",
-            "off": "unlocked"
-          },
-          "state": {
-            "value": "lock.value",
-            "on": "locked",
-            "off": "unlocked",
-            "label": "Lock: {{lock.value}}",
-            "alternatives": [
-              {
-                "key": "locked",
-                "value": "Locked",
-                "type": "inactive"
-              },
-              {
-                "key": "unlocked",
-                "value": "Unlocked",
-                "type": "active"
-              }
-            ]
+        "component" : "main",
+        "capability" : "earthbench45333.object",
+        "version" : 1,
+        "values" :[
+          {
+            "key" : "object.value",
+            "type" : "string",
+            "label" : "Object"
           }
-        },
-        "standbyPowerSwitch": {
-          "command": {
-            "name": "setLock",
-            "on": "locked",
-            "off": "unlocked"
-          },
-          "state": {
-            "value": "lock.value",
-            "on": "locked",
-            "off": "unlocked",
-            "label": "Lock: {{lock.value}}",
-            "alternatives": [
-              {
-                "key": "locked",
-                "value": "Locked",
-                "type": "inactive"
-              },
-              {
-                "key": "unlocked",
-                "value": "Unlocked",
-                "type": "active"
-              }
-            ]
+        ]
+      },
+      {
+        "component" : "trigger",
+        "capability" : "earthbench45333.trigger",
+        "version" : 1,
+        "values" :[
+          {
+            "key" : "trigger.value",
+            "type" : "string",
+            "label" : "Trigger"
           }
-        },
-        "switch": {
-          "command": {
-            "name": "setLock",
-            "on": "locked",
-            "off": "unlocked"
-          },
-          "state": {
-            "value": "lock.value",
-            "on": "locked",
-            "off": "unlocked",
-            "label": "Lock: {{lock.value}}",
-            "alternatives": [
-              {
-                "key": "locked",
-                "value": "Locked",
-                "type": "inactive"
-              },
-              {
-                "key": "unlocked",
-                "value": "Unlocked",
-                "type": "active"
-              }
-            ]
+        ]
+      },
+      {
+        "component" : "direction",
+        "capability" : "earthbench45333.direction",
+        "version" : 1,
+        "values" :[
+          {
+            "key" : "direction.value",
+            "type" : "string",
+            "label" : "Direction"
           }
-        },
-        "slider": {
-          "range": [
-            0,
-            100
-          ],
-          "step": 0.5,
-          "unit": "volume.unit",
-          "supportedValues": "supportedVolumes.value",
-          "command": "setVolume",
-          "value": "volume.value"
-        },
-        "pushButton": {
-          "command": "setButton",
-          "argument": "push"
-        },
-        "textButton": {
-          "command": "setThermostatMode",
-          "value": "switch.value",
-          "buttons": [
-            {
-              "key": "cooling",
-              "label": "Cooling",
-              "state": "Cooling"
-            },
-            {
-              "key": "cooling",
-              "label": "Cooling",
-              "state": "Cooling"
-            }
-          ],
-          "supportedValues": "supportedThermostatModes.value"
-        },
-        "playPause": {
-          "command": {
-            "name": "setPlaybackState",
-            "play": "play",
-            "pause": "pause"
-          },
-          "state": {
-            "value": "playbackState.value",
-            "play": "playing",
-            "pause": "paused",
-            "alternatives": [
-              {
-                "key": "playing",
-                "value": "Playing",
-                "type": "active"
-              },
-              {
-                "key": "paused",
-                "value": "Paused",
-                "type": "inactive"
-              }
-            ]
+        ]
+      },
+      {
+        "component" : "eye",
+        "capability" : "earthbench45333.eye",
+        "version" : 1,
+        "values" :[
+          {
+            "key" : "eye.value",
+            "type" : "string",
+            "label" : "Eye"
           }
-        },
-        "playStop": {
-          "command": {
-            "name": "setPlaybackState",
-            "play": "play",
-            "stop": "pause"
-          },
-          "state": {
-            "value": "playbackState.value",
-            "play": "playing",
-            "stop": "stopped",
-            "alternatives": [
-              {
-                "key": "playing",
-                "value": "Playing",
-                "type": "active"
-              },
-              {
-                "key": "stopped",
-                "value": "Stopped",
-                "type": "inactive"
-              }
-            ]
+        ]
+      },
+      {
+        "component" : "finger",
+        "capability" : "earthbench45333.finger",
+        "version" : 1,
+        "values" :[
+          {
+            "key" : "eye.value",
+            "type" : "string",
+            "label" : "Eye"
           }
-        },
-        "list": {
-          "command": {
-            "name": "setCleaningMode",
-            "alternatives": [
-              {
-                "key": "spot",
-                "value": "Spot cleaning mode"
-              },
-              {
-                "key": "auto",
-                "value": "Auto cleaning mode"
-              }
-            ]
-          },
-          "state": {
-            "value": "cleaningMode.value",
-            "alternatives": [
-              {
-                "key": "spot",
-                "value": "Spot cleaning mode"
-              },
-              {
-                "key": "auto",
-                "value": "Auto cleaning mode"
-              }
-            ]
-          }
-        },
-        "textField": {
-          "command": "sendNotification",
-          "value": "notification.value"
-        },
-        "numberField": {
-          "value": "volume.value",
-          "unit": "volume.unit",
-          "command": "setVolume",
-          "range": [
-            0,
-            100
-          ],
-          "supportedValues": "supportedVolumes.value"
-        },
-        "stepper": {
-          "command": {
-            "name": "setVolume"
-          },
-          "value": "volume.value",
-          "step": 1,
-          "range": [
-            0,
-            100
-          ],
-          "supportedValues": "supportedVolumes.value"
-        },
-        "state": {
-          "label": "{{temperatureMeasurement.value}}",
-          "unit": "temperature.unit",
-          "alternatives": [
-            {
-              "key": "on",
-              "value": "Motion detected",
-              "type": "active",
-              "iconUrl": "icon://example_icon_url",
-              "description": "string"
-            }
-          ]
-        }
+        ]
       }
     ],
     "automation": {
       "conditions": [
-        {
-          "label": "Audio volume",
-          "displayType": "slider",
-          "slider": {
-            "range": [
-              0,
-              100
-            ],
-            "step": 0.5,
-            "unit": "volume.unit",
-            "supportedValues": "supportedVolumes.value",
-            "value": "volume.value"
-          },
-          "list": {
-            "alternatives": [
-              {
-                "key": "spot",
-                "value": "Spot cleaning mode",
-                "iconUrl": "preload://ic_thermostatmode_spot"
-              },
-              {
-                "key": "auto",
-                "value": "Auto cleaning mode",
-                "iconUrl": "preload://ic_thermostatmode_auto"
-              }
-            ],
-            "supportedValues": "supportedThermostatModes.value",
-            "value": "thermostatMode.value",
-            "multiSelectable": false
-          },
-          "numberField": {
-            "value": "volume.value",
-            "unit": "volume.unit",
-            "range": [
-              0,
-              100
-            ],
-            "supportedValues": "supportedVolumes.value"
-          },
-          "textField": {
-            "value": "notification.value"
-          },
-          "enumSlider": {
-            "value": "dustHealthConcern.value",
-            "alternatives": [
-              {
-                "key": "hazardous",
-                "value": "Hazardous"
-              },
-              {
-                "key": "veryUnhealthy",
-                "value": "Very Unhealthy"
-              },
-              {
-                "key": "unhealthy",
-                "value": "Unhealthy"
-              },
-              {
-                "key": "moderate",
-                "value": "Moderate"
-              },
-              {
-                "key": "good",
-                "value": "Good"
-              }
-            ],
-            "supportedOperators": [
-              {
-                "operator": "EQUALS",
-                "label": "Equals to"
-              },
-              {
-                "operator": "GREATER_THAN_OR_EQUALS",
-                "label": "Greater than or equals to"
-              }
-            ]
-          },
-          "emphasis": true
-        }
-      ],
-      "actions": [
-        {
-          "label": "Audio volume",
-          "displayType": "slider",
-          "slider": {
-            "range": [
-              0,
-              100
-            ],
-            "step": 0.5,
-            "unit": "volume.unit",
-            "supportedValues": "supportedVolumes.value",
-            "command": "setTemperature"
-          },
-          "list": {
-            "alternatives": [
-              {
-                "key": "cooling",
-                "value": "Cooling mode"
-              },
-              {
-                "key": "heating",
-                "value": "Heating mode"
-              }
-            ],
-            "supportedValues": "supportedThermostatModes.value",
-            "command": "setThermostatMode"
-          },
-          "textField": {
-            "command": "sendNotification",
-            "range": [
-              0,
-              20
-            ]
-          },
-          "numberField": {
-            "command": "setVolume",
-            "unit": "volume.unit",
-            "range": [
-              0,
-              100
-            ],
-            "supportedValues": "supportedVolumes.value"
-          },
-          "multiArgCommand": {
-            "command": "playTrack",
-            "arguments": [
-              {
-                "label": "Audio volume",
-                "displayType": "slider",
-                "slider": {
-                  "range": [
-                    0,
-                    100
-                  ],
-                  "step": 0.5,
-                  "unit": "volume.unit",
-                  "supportedValues": "supportedVolumes.value",
-                  "name": "string",
-                  "argumentType": "double"
-                },
-                "list": {
-                  "alternatives": [
-                    {
-                      "key": "cooling",
-                      "value": "Cooling mode"
-                    },
-                    {
-                      "key": "heating",
-                      "value": "Heating mode"
-                    }
-                  ],
-                  "supportedValues": "supportedThermostatModes.value",
-                  "name": "string",
-                  "argumentType": "double"
-                },
-                "textField": {
-                  "name": "uri",
-                  "range": [
-                    5,
-                    50
-                  ]
-                },
-                "numberField": {
-                  "name": "level",
-                  "range": [
-                    0,
-                    10
-                  ]
-                }
-              }
-            ]
-          },
-          "emphasis": true
-        }
+        
       ]
     }
   }

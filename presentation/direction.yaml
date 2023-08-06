@@ -1,22 +1,22 @@
 dashboard:
   states:
-    - label: '{{trigger.value}}'
+    - label: '{{direction.value}}'
       alternatives: null
   actions: []
   basicPlus: []
 detailView:
-  - label: 'Current trigger'
+  - label: 'Current direction'
     displayType: state
     state: 
-      value: trigger.value
-      label: '{{trigger.value}}'
+      value: direction.value
+      label: '{{direction.value}}'
       alternatives: null
 automation:
   conditions:
-    - label: 'Current trigger'
+    - label: 'Current direction'
       displayType: textField
       textField:
-        value: trigger.value
+        value: direction.value
   actions: []
-id: earthbench45333.trigger
+id: earthbench45333.direction
 version: 1

@@ -1,8 +1,0 @@
-# config.yaml
-name: 'vtouch'
-packageKey: 'vtouch0420'
-description: 'vtouch example configuration file'
-vendorSupportInformation: 'VTouch'
-permissions:
-  lan: {}
-  discovery: {}

@@ -29,135 +29,10 @@ local RECONNECT_PERIOD = 120 -- 2 min
 local Listener = {}
 Listener.__index = Listener
 Listener.WS_PORT = 8080
-
-function Listener:presets_update(presets)
-  log.info(
-    string.format("(%s)[%s] presets_update", bose_utils.get_serial_number(self.device), self.device.label))
-  self.device:emit_event(capabilities.mediaPresets.presets(presets))
-end
-
-function Listener:now_playing_update(info)
-  log.info(string.format("(%s)[%s] now playing update %s", bose_utils.get_serial_number(self.device),
-                         self.device.label, utils.stringify_table(info)))
-  if info.play_state == "INVALID_PLAY_STATUS" then return end
-  if info.source == "STANDBY" then
-    self.device:emit_event(capabilities.switch.switch.off())
-    self.device:emit_event(capabilities.mediaPlayback.playbackStatus.stopped())
-  else
-    if self.device:get_latest_state("main", capabilities.switch.ID, capabilities.switch.switch.NAME, "off") == "off" then
-      self.device:emit_event(capabilities.switch.switch.on())
-    end
-
-    -- set play state
-    if info.play_state == "STOP_STATE" or info.play_state == "PAUSE_STATE" then
-      self.device:emit_event(capabilities.mediaPlayback.playbackStatus.paused())
-    else
-      self.device:emit_event(capabilities.mediaPlayback.playbackStatus.playing())
-    end
-
-    -- get audio track data
-    local trackdata = {}
-    trackdata.artist = bose_utils.sanitize_field(info.artist)
-    trackdata.album = bose_utils.sanitize_field(info.album)
-    trackdata.albumArtUrl = bose_utils.sanitize_field(info.art_url)
-    trackdata.mediaSource = bose_utils.sanitize_field(info.source)
-    trackdata.title = bose_utils.sanitize_field(info.track) or
-      bose_utils.sanitize_field(info.station) or
-      (info.source == "AUX" and "Auxiliary input") or
-      trackdata.mediaSource or "No title"
-    self.device:emit_event(capabilities.audioTrackData.audioTrackData(trackdata))
-  end
-end
-
 --- new preset has been selected
-function Listener:preset_select_update(preset_id)
-  log.info(string.format("[%s](%s) preset_select_update: %s", bose_utils.get_serial_number(self.device),
-                         self.device.label, preset_id))
-end
 
-function Listener:volume_update(new_volume, mute_enable)
-  log.info(string.format("[%s](%s): volume update %s", bose_utils.get_serial_number(self.device),
-                         self.device.label, new_volume))
-  self.device:emit_event(capabilities.audioVolume.volume(new_volume))
-  if mute_enable then
-    self.device:emit_event(capabilities.audioMute.mute.muted())
-  else
-    self.device:emit_event(capabilities.audioMute.mute.unmuted())
-  end
-end
 
--- TODO events not parsed yet
-function Listener:zone_update(xml)
-  log.info(string.format("[%s](%s) zone_update: %s", bose_utils.get_serial_number(self.device),
-                         self.device.label, xml))
-end
-
-function Listener:name_update(new_name)
-  log.info(string.format("[%s](%s) name_update: %s", bose_utils.get_serial_number(self.device),
-                         self.device.label, new_name))
-  self.device:try_update_metadata({vendor_provided_label = new_name})
-end
-
-function Listener:handle_xml_event(xml)
-  local handler = xml_handler:new()
-  local xml_parser = xml2lua.parser(handler)
-  xml_parser:parse(xml)
-  if handler.root.userActivityUpdate then
-    return
-  elseif handler.root.updates then
-    local updates = handler.root.updates
-    if updates.volumeUpdated then
-      self:volume_update(tonumber(updates.volumeUpdated.volume.actualvolume),
-                         updates.volumeUpdated.volume.muteenabled == "true")
-    elseif updates.nowPlayingUpdated then
-      local art_url
-      if updates.nowPlayingUpdated.nowPlaying.art then
-        art_url = bose_utils.sanitize_field(updates.nowPlayingUpdated.nowPlaying.art[1])
-      end
-      self:now_playing_update({
-        track = bose_utils.sanitize_field(updates.nowPlayingUpdated.nowPlaying.track),
-        artist = bose_utils.sanitize_field(updates.nowPlayingUpdated.nowPlaying.artist),
-        album = bose_utils.sanitize_field(updates.nowPlayingUpdated.nowPlaying.album),
-        station = bose_utils.sanitize_field(updates.nowPlayingUpdated.nowPlaying.stationName),
-        play_state = bose_utils.sanitize_field(updates.nowPlayingUpdated.nowPlaying.playStatus),
-        source = bose_utils.sanitize_field(updates.nowPlayingUpdated.nowPlaying._attr.source),
-        art_url = bose_utils.sanitize_field(art_url),
-      })
-    elseif updates.nowSelectionUpdated then
-      self:preset_select_update(updates.nowSelectionUpdated.preset._attr.id)
-    elseif updates.nameUpdated then
-      self:name_update(updates.nameUpdated)
-    elseif updates.presetsUpdated and updates.presetsUpdated.presets and
-      updates.presetsUpdated.presets.preset then
-      local result = {}
-      if not updates.presetsUpdated.presets.preset._attr then -- it is a list of presets rather than just one preset
-        for _, preset in ipairs(updates.presetsUpdated.presets.preset) do
-          if preset._attr and preset._attr.id then
-            table.insert(result, {
-              id = preset._attr.id, --must exist for valid preset
-              name = bose_utils.sanitize_field(preset.ContentItem.itemName, preset._attr.id),
-              mediaSource = bose_utils.sanitize_field(preset.ContentItem._attr.source),
-              imageUrl = bose_utils.sanitize_field(preset.ContentItem.containerArt),
-            })
-          end
-        end
-      elseif updates.presetsUpdated.presets.preset._attr and updates.presetsUpdated.presets.preset._attr.id then
-        table.insert(result, {
-          id = updates.presetsUpdated.presets.preset._attr.id,
-          name = bose_utils.sanitize_field(updates.presetsUpdated.presets.preset.ContentItem.itemName,
-            updates.presetsUpdated.presets.preset._attr.id),
-          mediaSource = bose_utils.sanitize_field(updates.presetsUpdated.presets.preset.ContentItem._attr.source),
-          imageUrl = bose_utils.sanitize_field(updates.presetsUpdated.presets.preset.ContentItem.containerArt),
-        })
-      else
-        log.warn("received invalid presets from device")
-      end
-      self:presets_update(result)
-    else
-      log.debug(string.format("[%s](%s) update ignored: %s", bose_utils.get_serial_number(self.device),
-                              self.device.label, utils.stringify_table(updates)))
-    end
-  end
+function Listener:handle_json_event(json)
   return handler.root -- used for debugging
 end
 
@@ -204,6 +79,7 @@ function Listener:start()
   end
   sock:settimeout(3)
   local config = Config.default():protocol("gabbo"):keep_alive(30)
+  -- websocket client 
   local websocket = ws.client(sock, "/", config)
   websocket:register_message_cb(function(msg)
     self:handle_xml_event(msg.data)

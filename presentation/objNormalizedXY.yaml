@@ -1,0 +1,15 @@
+dashboard:
+  states:
+    - label: '{{objnormalizedxy.value}}'
+      alternatives: null
+  actions: []
+  basicPlus: []
+detailView:
+  - label: 'Current objnormalizedxy'
+    displayType: state
+    state: 
+      value: objnormalizedxy.value
+      label: '{{objnormalizedxy.value}}'
+
+id: earthbench45333.objnormalizedxy
+version: 1

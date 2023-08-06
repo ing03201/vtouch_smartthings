@@ -1,7 +1,7 @@
-name: 'Philips Hue'
-packageKey: 'philips-hue'
+name: 'Spatial Touch'
+packageKey: 'SpatialTouch'
 permissions:
   lan: {}
   discovery: {}
-description: "SmartThings driver for Philips Hue devices"
-vendorSupportInformation: "https://support.smartthings.com"
+description: "Spatial Touch™ for SmartThings"
+vendorSupportInformation: "https://vtouch.com"
