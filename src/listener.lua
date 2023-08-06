@@ -12,15 +12,14 @@
 --
 
 local log = require "log"
-local xml2lua = require "xml2lua"
-local xml_handler = require "xmlhandler.tree"
+local json = require "json"
 local socket = require "cosock.socket"
 local Config = require"lustre".Config
 local ws = require"lustre".WebSocket
 local CloseCode = require"lustre.frame.close".CloseCode
 local capabilities = require "st.capabilities"
 local utils = require "st.utils"
-local bose_utils = require "utils"
+local vtouch_utils = require "utils"
 local RECONNECT_PERIOD = 120 -- 2 min
 
 --- @field device table the device the listener is listening for events
@@ -40,19 +39,12 @@ function Listener:try_reconnect()
   local retries = 0
   local ip = self.device:get_field("ip")
   if not ip then
-    log.warn(string.format("[%s](%s) Cannot reconnect because no device ip",
-                           bose_utils.get_serial_number(self.device), self.device.label))
+    log.warn(string.format("Cannot reconnect because no device ip")
     return
   end
-  log.info(string.format("[%s](%s) Attempting to reconnect websocket for speaker at %s",
-                         bose_utils.get_serial_number(self.device), self.device.label, ip))
   while true do
     if self:start() then
-      self.driver:inject_capability_command(self.device,
-                                            { capability = capabilities.refresh.ID,
-                                              command = capabilities.refresh.commands.refresh.NAME,
-                                              args = {}
-                                            })
+      log.info(string.format("Reconnected! attempt %s in %s seconds", retries, RECONNECT_PERIOD))
       return
     end
     retries = retries + 1
@@ -66,27 +58,24 @@ function Listener:start()
   local url = "/"
   local sock, err = socket.tcp()
   local ip = self.device:get_field("ip")
-  local serial_number = bose_utils.get_serial_number(self.device)
   if not ip then
     log.error_with({hub_logs=true}, "Failed to start listener, no ip address for device")
     return false
   end
-  log.info_with({hub_logs=true}, string.format("[%s](%s) Starting websocket listening client on %s:%s",
-                         bose_utils.get_serial_number(self.device), self.device.label, ip, url))
+  log.info_with({hub_logs=true}, string.format("Starting websocket listening client on %s:%s", ip, url))
   if err then
-    log.error_with({hub_logs=true}, string.format("[%s](%s) failed to get tcp socket: %s", serial_number, self.device.label, err))
+    log.error_with({hub_logs=true}, string.format("failed to get tcp socket: %s", err))
     return false
   end
   sock:settimeout(3)
-  local config = Config.default():protocol("gabbo"):keep_alive(30)
   -- websocket client 
   local websocket = ws.client(sock, "/", config)
   websocket:register_message_cb(function(msg)
-    self:handle_xml_event(msg.data)
+    self:handle_json_event(msg.data)
     -- log.debug(string.format("(%s:%s) Websocket message: %s", device.device_network_id, ip, utils.stringify_table(event, nil, true)))
   end):register_error_cb(function(err)
     -- TODO some muxing on the error conditions
-    log.error_with({hub_logs=true}, string.format("[%s](%s) Websocket error: %s", serial_number,
+    log.error_with({hub_logs=true}, string.format("(%s) Websocket error: %s",
                             self.device.label, err))
     if err and (err:match("closed") or err:match("no response to keep alive ping commands")) then
       self.device:offline()
@@ -94,19 +83,17 @@ function Listener:start()
     end
   end)
   websocket:register_close_cb(function(reason)
-    log.info_with({hub_logs=true}, string.format("[%s](%s) Websocket closed: %s", serial_number,
-                           self.device.label, reason))
+    log.info_with({hub_logs=true}, string.format("(%s) Websocket closed: %s", self.device.label, reason))
     self.websocket = nil -- TODO make sure it is set to nil correctly
     if not self._stopped then self:try_reconnect() end
   end)
   local _
   _, err = websocket:connect(ip, Listener.WS_PORT)
   if err then
-    log.error_with({hub_logs=true}, string.format("[%s](%s) failed to connect websocket: %s", serial_number, self.device.label, err))
+    log.error_with({hub_logs=true}, string.format("(%s) failed to connect websocket: %s", self.device.label, err))
     return false
   end
-  log.info_with({hub_logs=true}, string.format("[%s](%s) Connected websocket successfully", serial_number,
-                         self.device.label))
+  log.info_with({hub_logs=true}, string.format("(%s) Connected websocket successfully",self.device.label))
   self._stopped = false
   self.websocket = websocket
   self.device:online()

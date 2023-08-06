@@ -1,5 +1,4 @@
 local mdns = requires('st.mdns')
-
 local function discoverDevices( deviceName, service)
   local serviceType = "vtouch._tcp"
   local domain 	  = "local"

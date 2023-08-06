@@ -179,7 +179,7 @@ local function info_changed(driver, device, event, args)
   end
 end
 
-local bose = Driver("bose", {
+local bose = Driver("VTouch", {
   discovery = discovery_handler,
   lifecycle_handlers = {
     init = device_init,
