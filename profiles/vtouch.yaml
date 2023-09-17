@@ -14,5 +14,9 @@ components:
         version: 1
       - id: earthbench45333.direction
         version: 1
+      - id: refresh
+        version: 1
+      - id: switch
+        version: 1
     categories:
-      - name: VTouch
+      - name: Others
