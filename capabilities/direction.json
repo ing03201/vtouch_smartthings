@@ -11,7 +11,7 @@
                 "properties": {
                     "value": {
                         "type": "string",
-                        "maxLength": 2,
+                        "maxLength": 4,
                         "enum" : [
                             "N",
                             "L",
