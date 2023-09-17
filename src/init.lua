@@ -83,59 +83,10 @@ end
 local function do_refresh(driver, device, cmd)
     -- get speaker playback state
     local deviceIp = device:get_field("ip")
-    if not info then
-        device.log.error(string.format("failed to get speaker state: %s", err))
-    elseif info.source == "STANDBY" then
-        device:emit_event(capabilities.switch.switch.off())
-        device:emit_event(capabilities.mediaPlayback.playbackStatus.stopped())
-    else
-        device:emit_event(capabilities.switch.switch.on())
-
-        -- set play state
-        if info.play_state == "STOP_STATE" then
-            device:emit_event(capabilities.mediaPlayback.playbackStatus.stopped())
-        elseif info.play_state == "PAUSE_STATE" then
-            device:emit_event(capabilities.mediaPlayback.playbackStatus.paused())
-        else
-            device:emit_event(capabilities.mediaPlayback.playbackStatus.playing())
-        end
-
-        -- get audio track data
-        local trackdata = {}
-        trackdata.artist = info.artist
-        trackdata.album = info.album
-        trackdata.albumArtUrl = info.art_url
-        trackdata.mediaSource = info.source
-        trackdata.title = info.track or info.station or
-            (info.source == "AUX" and "Auxiliary input") or
-            trackdata.mediaSource or "No title" --title is a required field
-        device:emit_event(capabilities.audioTrackData.audioTrackData(trackdata))
-
-        device:emit_event(capabilities.mediaTrackControl.supportedTrackControlCommands({
-            capabilities.mediaTrackControl.commands.nextTrack.NAME,
-            capabilities.mediaTrackControl.commands.previousTrack.NAME,
-        }))
-
-        device:online()
+    if not deviceIp then
+        device.log.warn("failed to get device ip to refresh the device state")
+        return
     end
-
-    -- get volume
-    local vol, err = command.volume(device:get_field("ip"))
-    if not vol then
-        device.log.error(string.format("failed to get initial volume: %s", err))
-    else
-        device:emit_event(capabilities.audioVolume.volume(vol.actual))
-        if vol.muted then device:emit_event(capabilities.audioMute.mute.muted()) end
-    end
-
-    -- get presets
-    local presets, err = command.presets(device:get_field("ip"))
-    if not presets then
-        device.log.error(string.format("failed to get presets: %s", err))
-    else
-        device:emit_event(capabilities.mediaPresets.presets(presets))
-    end
-
     -- restart listener if needed
     local listener = device:get_field("listener")
     if listener and (listener:is_stopped() or listener.websocket == nil)then
