@@ -48,43 +48,50 @@ Listener.funcTable = {
 }
 
 function Listener:name_update(new_name)
-    log.info(string.format("[%s](%s) name_update: %s", vtouch_utils.get_serial_number(self.device),
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) name_update: %s", ip,
                                                  self.device.label, new_name))
     self.device:try_update_metadata({vendor_provided_label = new_name})
 end
 
 function Listener:objId_update(obj_id)
-    log.info(string.format("[%s](%s) objId_update: %s", vtouch_utils.get_serial_number(self.device),
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) objId_update: %s", ip,
                                                  self.device.label, obj_id))
     self.device:emit_event(objId.object(obj_id))
 end
 
 function Listener:eye_update(eye)
-    log.info(string.format("[%s](%s) eye_update: %s", vtouch_utils.get_serial_number(self.device),
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) eye_update: %s", ip,
                                                  self.device.label, eye))
     self.device:emit_event(eye.eye({eye.x, eye.y, eye.z} ))
 end
 
 function Listener:finger_update(finger)
-    log.info(string.format("[%s](%s) finger_update: %s", vtouch_utils.get_serial_number(self.device),
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) finger_update: %s", ip,
                                                  self.device.label, finger))
     self.device:emit_event(finger.finger({finger.x, finger.y, finger.z}))
 end
 
 function Listener:objNormalized_update(objNormalized)
-    log.info(string.format("[%s](%s) objNormalized_update: %s", vtouch_utils.get_serial_number(self.device),
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) objNormalized_update: %s", ip,
                                                  self.device.label, objNormalized))
     self.device:emit_event(objNormalized.XY( { objNormalized.x, objNormalized.y } ))
 end
 
 function Listener:trigger_update(trigger)
-    log.info(string.format("[%s](%s) trigger_update: %s", vtouch_utils.get_serial_number(self.device),
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) trigger_update: %s", ip,
                                                  self.device.label, trigger))
     self.device:emit_event(trigger.trigger(trigger))
 end
 
 function Listener:direction_update(direction)
-    log.info(string.format("[%s](%s) direction_update: %s", vtouch_utils.get_serial_number(self.device),
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) direction_update: %s", ip,
                                                  self.device.label, direction))
     self.device:emit_event(direction.direction(direction))
 end
@@ -103,11 +110,11 @@ function Listener:try_reconnect()
     local ip = self.device:get_field("ip")
     if not ip then
         log.warn(string.format("[%s](%s) Cannot reconnect because no device ip",
-                                                     vtouch_utils.get_serial_number(self.device), self.device.label))
+                                                     ip, self.device.label))
         return
     end
     log.info(string.format("[%s](%s) Attempting to reconnect websocket for vtouch at %s",
-                                                 vtouch_utils.get_serial_number(self.device), self.device.label, ip))
+                                                 ip, self.device.label, ip))
     while true do
         if self:start() then
             self.driver:inject_capability_command(
@@ -131,13 +138,13 @@ function Listener:start()
     local url = "/"
     local sock, err = socket.tcp()
     local ip = self.device:get_field("ip")
-    local serial_number = vtouch_utils.get_serial_number(self.device)
+    local serial_number = ip
     if not ip then
         log.error_with({hub_logs=true}, "Failed to start listener, no ip address for device")
         return false
     end
     log.info_with({hub_logs=true}, string.format("[%s](%s) Starting websocket listening client on %s:%s",
-                                                 vtouch_utils.get_serial_number(self.device), self.device.label, ip, url))
+                                                 ip, self.device.label, ip, url))
     if err then
         log.error_with({hub_logs=true}, string.format("[%s](%s) failed to get tcp socket: %s", serial_number, self.device.label, err))
         return false
@@ -186,13 +193,13 @@ end
 function Listener:stop()
     self._stopped = true
     if not self.websocket then
-        log.warn(string.format("[%s](%s) no websocket exists to close", vtouch_utils.get_serial_number(self.device),
+        log.warn(string.format("[%s](%s) no websocket exists to close", ip,
                                                      self.device.label))
         return
     end
     local suc, err = self.websocket:close(CloseCode.normal())
     if not suc then
-        log.error(string.format("[%s](%s) failed to close websocket: %s", vtouch_utils.get_serial_number(self.device),
+        log.error(string.format("[%s](%s) failed to close websocket: %s", ip,
                                                         self.device.label, err))
     end
 end

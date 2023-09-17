@@ -33,24 +33,19 @@ local net_utils = require "st.net_utils"
 local Listener = require "listener"
 local mdns = require "st.mdns"
 
-local function discovery_handler(driver, _, should_continue)
-    
-    local SERVICE_TYPE = "_vtouch._tcp"
-    local DOMAIN = "http://vtouch.local"
-    log.info("Starting discovery")
-    local mdns_responses, err = mdns.discover(SERVICE_TYPE, DOMAIN)
 
+local function discovery_handler(driver, _, should_continue)
+    local SERVICE_TYPE = "_vtouch._tcp"
+    local DOMAIN = "local"
+    log.info("Starting discovery")
+
+    local mdns_responses, err = mdns.discover(SERVICE_TYPE, DOMAIN)
     if err ~= nil then
         log.error_with({hub_logs=true}, "Error discovering vtouch: " .. err)
         return
     end
-    if not(mdns_responses and mdns_responses.found and mdns_responses.found > 0) then
-        log.warn_with({hub_logs=true}, "No vtouch devices found")
-        return
-    end
 
     for _, info in ipairs(mdns_responses.found) do 
-
         if not net_utils.validate_ipv4_string(info.host_info.address) then
             log.trace("Invalid IP address for vtouch device: " .. info.host_info.address)
             return
@@ -67,15 +62,17 @@ local function discovery_handler(driver, _, should_continue)
         end
         
         local create_msg = driver:try_create_device({
-            type = "VTouch",
-            external_id = info.service_info.service_name,
-            external_address = info.host_info.address,
-            network_address = info.host_info.address,
-            label = info.service_info.service_name,
-            profile = "vtouch"
+            type = "LAN",
+            device_network_id ="24FD5B0001044502" ,
+            label = "Spatial Touch",
+            profile = "vtouch",
+            manufacturer = "VTouch",
+            model = "Spatial Touch",
+            vendor_provided_label = "VTouch",
         })
 
         driver:try_create_device(create_msg)
+
     end
     log.info("Ending discovery")
 end
@@ -132,7 +129,7 @@ local function device_init(driver, device)
     end
     device:set_field("init_started", true)
     device.log.info_with({ hub_logs = true }, "initializing device")
-    local serial_number = vtouch_utils.get_serial_number(device)
+    device.log.debug_with({ hub_logs = true }, string.format("device data: %s", device.data.ip))
     -- Carry over DTH discovered ip during migration to enable some communication
     -- in cases where it takes a long time to rediscover the device on the LAN.
     if not device:get_field("ip") and device.data and device.data.ip then
@@ -144,20 +141,10 @@ local function device_init(driver, device)
 
     cosock.spawn(function()
         local backoff = backoff_builder(300, 1, 0.25)
-        local dev_info
-        while true do
-            discovery.find(serial_number, function(found) dev_info = found end)
-            if dev_info then break end
-            local tm = backoff()
-            device.log.info_with({ hub_logs = true }, string.format("Failed to initialize device, retrying after delay: %.1f", tm))
-            socket.sleep(tm)
-        end
-        if not dev_info or not dev_info.ip then
-            device.log.warn_with({hub_logs=true}, "device not found on network")
-            return
-        end
-        device.log.info_with({ hub_logs = true }, string.format("Device init re-discovered device on the lan: %s", dev_info.ip))
-        device:set_field("ip", dev_info.ip, {persist = true})
+        local nu = require "st.net_utils"
+        local ip = device.data.ip
+        device.log.info_with({ hub_logs = true }, string.format("Device init re-discovered device on the lan: %s", ip))
+        device:set_field("ip", ip, {persist = true})
 
         device:emit_event(capabilities.switch.switch.on())
         do_refresh(driver, device)
