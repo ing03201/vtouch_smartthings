@@ -12,6 +12,7 @@
 --
 
 local log = require "log"
+local json = require "dkjson"
 local socket = require "cosock.socket"
 local Config = require"lustre".Config
 local ws = require"lustre".WebSocket
@@ -96,13 +97,14 @@ function Listener:direction_update(direction)
     self.device:emit_event(direction.direction(direction))
 end
 
-function Listener:handle_json_event(json)
-    local dataTable = utils.json_to_table(json)
-    for key, value in pairs(dataTable) do
-        if Listener.funcTable[key] then
-            Listener.funcTable[key](self, value)
-        end
-    end
+function Listener:handle_json_event(jsonData)
+    -- local dataTable = json.decode(jsonData)
+    -- for key, value in pairs(dataTable) do
+    --     if Listener.funcTable[key] then
+    --         Listener.funcTable[key](self, value)
+    --     end
+    -- end
+    log.info(string.format("Received json data: %s", jsonData))
 end
 
 function Listener:try_reconnect()

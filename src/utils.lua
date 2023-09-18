@@ -11,7 +11,7 @@ utils.table_to_json = function (lua_table)
 end
 
 utils.json_to_table = function (json_string)
-    local lua_table, _, err = json.decode(json_string, 1, nil)
+    local lua_table = json.decode(json_string)
     if err then
         log.error(string.format("Failed to decode json: %s", err))
         return nil

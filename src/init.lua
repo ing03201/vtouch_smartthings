@@ -60,10 +60,11 @@ local function discovery_handler(driver, _, should_continue)
             log.trace("Invalid domain for vtouch device: " .. info.service_info.domain)
             return
         end
-        
+        local ip = info.host_info.address
+        log.info(string.format("Discovered vtouch device at %s", ip))
         local create_msg = driver:try_create_device({
             type = "LAN",
-            device_network_id ="24FD5B0001044502" ,
+            device_network_id = ip ,
             label = "Spatial Touch",
             profile = "vtouch",
             manufacturer = "VTouch",
@@ -79,7 +80,7 @@ end
 
 local function do_refresh(driver, device, cmd)
     -- get speaker playback state
-    local deviceIp = device:get_field("ip")
+    local deviceIp = device.device_network_id
     if not deviceIp then
         device.log.warn("failed to get device ip to refresh the device state")
         return
@@ -132,17 +133,15 @@ local function device_init(driver, device)
     device.log.debug_with({ hub_logs = true }, string.format("device data: %s", device.data.ip))
     -- Carry over DTH discovered ip during migration to enable some communication
     -- in cases where it takes a long time to rediscover the device on the LAN.
-    if not device:get_field("ip") and device.data and device.data.ip then
-        local nu = require "st.net_utils"
-        local ip = nu.convert_ipv4_hex_to_dotted_decimal(device.data.ip)
+    if not device.device_network_id and device.data and device.data.ip then
+        local ip = device.device_network_id
         device:set_field("ip", ip, { persist = true })
         device.log.info(string.format("Using migrated ip address: %s", ip))
     end
 
     cosock.spawn(function()
         local backoff = backoff_builder(300, 1, 0.25)
-        local nu = require "st.net_utils"
-        local ip = device.data.ip
+        local ip = device.device_network_id
         device.log.info_with({ hub_logs = true }, string.format("Device init re-discovered device on the lan: %s", ip))
         device:set_field("ip", ip, {persist = true})
 
@@ -170,7 +169,7 @@ end
 
 local function info_changed(driver, device, event, args)
     if device.label ~= args.old_st_store.label then
-        local ip = device:get_field("ip")
+        local ip = device.device_network_id
         if not ip then
             device.log.warn("failed to get device ip to update the vtouch name")
             local err = command.set_name(device.label)
