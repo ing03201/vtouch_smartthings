@@ -38,42 +38,41 @@ local function discovery_handler(driver, _, should_continue)
     local SERVICE_TYPE = "_vtouch._tcp"
     local DOMAIN = "local"
     log.info("Starting discovery")
-
-    local mdns_responses, err = mdns.discover(SERVICE_TYPE, DOMAIN)
-    if err ~= nil then
-        log.error_with({hub_logs=true}, "Error discovering vtouch: " .. err)
-        return
-    end
-
-    for _, info in ipairs(mdns_responses.found) do 
-        if not net_utils.validate_ipv4_string(info.host_info.address) then
-            log.trace("Invalid IP address for vtouch device: " .. info.host_info.address)
+    while should_continue() do
+        local mdns_responses, err = mdns.discover(SERVICE_TYPE, DOMAIN)
+        if err ~= nil then
+            log.error_with({hub_logs=true}, "Error discovering vtouch: " .. err)
             return
         end
 
-        if info.service_info.service_type ~= SERVICE_TYPE then
-            log.trace("Invalid service type for vtouch device: " .. info.service_info.service_type)
-            return
+        for _, info in ipairs(mdns_responses.found) do 
+            if not net_utils.validate_ipv4_string(info.host_info.address) then
+                log.trace("Invalid IP address for vtouch device: " .. info.host_info.address)
+                return
+            end
+
+            if info.service_info.service_type ~= SERVICE_TYPE then
+                log.trace("Invalid service type for vtouch device: " .. info.service_info.service_type)
+                return
+            end
+
+            if info.service_info.domain ~= DOMAIN then
+                log.trace("Invalid domain for vtouch device: " .. info.service_info.domain)
+                return
+            end
+            local ip = info.host_info.address
+            log.info(string.format("Discovered vtouch device at %s", ip))
+            local create_msg = driver:try_create_device({
+                type = "LAN",
+                device_network_id = ip ,
+                label = "Spatial Touch",
+                profile = "vtouch",
+                manufacturer = "VTouch",
+                model = "Spatial Touch",
+                vendor_provided_label = "VTouch",
+            })
+            assert( driver:try_create_device(create_msg), "failed to create VTouch device" )
         end
-
-        if info.service_info.domain ~= DOMAIN then
-            log.trace("Invalid domain for vtouch device: " .. info.service_info.domain)
-            return
-        end
-        local ip = info.host_info.address
-        log.info(string.format("Discovered vtouch device at %s", ip))
-        local create_msg = driver:try_create_device({
-            type = "LAN",
-            device_network_id = ip ,
-            label = "Spatial Touch",
-            profile = "vtouch",
-            manufacturer = "VTouch",
-            model = "Spatial Touch",
-            vendor_provided_label = "VTouch",
-        })
-
-        driver:try_create_device(create_msg)
-
     end
     log.info("Ending discovery")
 end
