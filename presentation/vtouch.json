@@ -60,30 +60,6 @@
             "label" : "Direction"
           }
         ]
-      },
-      {
-        "component" : "eye",
-        "capability" : "earthbench45333.eye",
-        "version" : 1,
-        "values" :[
-          {
-            "key" : "eye.value",
-            "type" : "string",
-            "label" : "Eye"
-          }
-        ]
-      },
-      {
-        "component" : "finger",
-        "capability" : "earthbench45333.finger",
-        "version" : 1,
-        "values" :[
-          {
-            "key" : "eye.value",
-            "type" : "string",
-            "label" : "Eye"
-          }
-        ]
       }
     ],
     "automation": {

@@ -23,24 +23,6 @@ detailView:
         patch: []
     -
         component: main
-        capability: earthbench45333.eye
-        version: 1
-        values: []
-        patch: []
-    -
-        component: main
-        capability: earthbench45333.finger
-        version: 1
-        values: []
-        patch: []
-    -
-        component: main
-        capability: earthbench45333.objnormalizedxy
-        version: 1
-        values: []
-        patch: []
-    -
-        component: main
         capability: earthbench45333.trigger
         version: 1
         values: []
@@ -56,27 +38,6 @@ automation:
         -
             component: main
             capability: earthbench45333.object
-            version: 1
-            values: []
-            patch: []
-            exclusion: []
-        -
-            component: main
-            capability: earthbench45333.eye
-            version: 1
-            values: []
-            patch: []
-            exclusion: []
-        -
-            component: main
-            capability: earthbench45333.finger
-            version: 1
-            values: []
-            patch: []
-            exclusion: []
-        -
-            component: main
-            capability: earthbench45333.objnormalizedxy
             version: 1
             values: []
             patch: []

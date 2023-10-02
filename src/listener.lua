@@ -22,9 +22,9 @@ local utils = require "st.utils"
 local vtouch_utils = require "utils"
 
 local capObjId = capabilities["earthbench45333.object"]
-local capEye = capabilities["earthbench45333.eye"]
-local capFinger = capabilities["earthbench45333.finger"]
-local capObjNormalized = capabilities["earthbench45333.objnormalizedxy"]
+-- local capEye = capabilities["earthbench45333.eye"]
+-- local capFinger = capabilities["earthbench45333.finger"]
+-- local capObjNormalized = capabilities["earthbench45333.objnormalizedxy"]
 local capTrigger = capabilities["earthbench45333.trigger"]
 local capDirection = capabilities["earthbench45333.direction"]
 local RECONNECT_PERIOD = 30 -- 30 Sec
@@ -38,9 +38,9 @@ Listener.WS_PORT = 20000
 Listener._status = false
 Listener.funcTable = {
     ["objId"] = Listener.objId_update,
-    ["eye"] = Listener.eye_update,
-    ["finger"] = Listener.finger_update,
-    ["objNormalized"] = Listener.objNormalized_update,
+    -- ["eye"] = Listener.eye_update,
+    -- ["finger"] = Listener.finger_update,
+    -- ["objNormalized"] = Listener.objNormalized_update,
     ["trigger"] = Listener.trigger_update,
     ["direction"] = Listener.direction_update
 }
@@ -52,73 +52,68 @@ function Listener:name_update(new_name)
     self.device:try_update_metadata({vendor_provided_label = new_name})
 end
 
-function Listener:objId_update(value)
+function Listener:objId_update(objId)
     local ip = self.device:get_field("ip")
     log.info(string.format("[%s](%s) objId_update: %s", ip,
                                                  self.device.label, value))
-    if value ~= nil then
-        self.device:emit_event(capObjId.object(tostring(obj_id)))
+    if objId ~= nil then
+        self.device:emit_event(capObjId.object(objId))
     end
 end
 
-function Listener:eye_update(eye)
-    local ip = self.device:get_field("ip")
-    log.info(string.format("[%s](%s) eye_update: %s", ip,
-                                                 self.device.label, eye))
-    self.device:emit_event(capEye.eye({eye.x, eye.y, eye.z} ))
-end
+-- function Listener:eye_update(eye)
+--     local ip = self.device:get_field("ip")
+--     log.info(string.format("[%s](%s) eye_update: %s", ip,
+--                                                  self.device.label, eye))
+--     self.device:emit_event(capEye.eye({eye} ))
+-- end
 
-function Listener:finger_update(finger)
-    local ip = self.device:get_field("ip")
-    log.info(string.format("[%s](%s) finger_update: %s", ip,
-                                                 self.device.label, finger))
-    self.device:emit_event(capFinger.finger({finger.x, finger.y, finger.z}))
-end
+-- function Listener:finger_update(finger)
+--     local ip = self.device:get_field("ip")
+--     log.info(string.format("[%s](%s) finger_update: %s", ip,
+--                                                  self.device.label, finger))
+--     self.device:emit_event(capFinger.finger({finger.x, finger.y, finger.z}))
+-- end
 
-function Listener:objNormalized_update(objNormalized)
-    local ip = self.device:get_field("ip")
-    local normalizedXY = {}
-    for key, value in pairs(objNormalized) do
-        normalizedXY[key] = value
-    end
-    log.info(string.format("[%s](%s) objNormalized_update: %s %s", ip,
-                                                 self.device.label, normalizedXY.x, normalizedXY.y))
-    self.device:emit_event(capObjNormalized.XY( { normalizedXY.x, normalizedXY.y } ))
-end
+-- function Listener:objNormalized_update(objNormalized)
+--     local ip = self.device:get_field("ip")
+--     local normalizedXY = {}
+--     for key, value in pairs(objNormalized) do
+--         normalizedXY[key] = value
+--     end
+--     log.info(string.format("[%s](%s) objNormalized_update: %s %s", ip,
+--                                                  self.device.label, normalizedXY.x, normalizedXY.y))
+--     self.device:emit_event(capObjNormalized.XY( { normalizedXY.x, normalizedXY.y } ))
+-- end
 
-function Listener:trigger_update(trigger)
-    local ip = self.device:get_field("ip")
-    log.info(string.format("[%s](%s) trigger_update: %s", ip,
-                                                 self.device.label, trigger))
-    self.device:emit_event(capTrigger.trigger(trigger))
-end
+-- function Listener:trigger_update(trigger)
+--     local ip = self.device:get_field("ip")
+--     log.info(string.format("[%s](%s) trigger_update: %s", ip,
+--                                                  self.device.label, trigger))
+--     self.device:emit_event(capTrigger.trigger(trigger))
+-- end
 
-function Listener:direction_update(direction)
-    local ip = self.device:get_field("ip")
-    log.info(string.format("[%s](%s) direction_update: %s", ip,
-                                                 self.device.label, direction))
-    self.device:emit_event(capDirection.direction(direction))
-end
+-- function Listener:direction_update(direction)
+--     local ip = self.device:get_field("ip")
+--     log.info(string.format("[%s](%s) direction_update: %s", ip,
+--                                                  self.device.label, direction))
+--     self.device:emit_event(capDirection.direction(direction))
+-- end
 
-function Listener:handle_json_event(jsonData)
-    local dataTable = json.decode(jsonData)
-    for key, value in pairs(dataTable) do
-        if key == "objId" then
-            self.objId_update(value)
-        elseif key == "eye" then
-            self.eye_update(value)
-        elseif key == "finger" then
-            self.finger_update(value)
-        elseif key == "objNormalized" then
-            self.objNormalized_update(value)
-        elseif key == "trigger" then
-            self.trigger_update(value)
-        elseif key == "direction" then
-            self.direction_update(value)
-        end
-        log.info(string.format("key: %s, value: %s", key, value))
-    end
-end
+-- function Listener:handle_json_event(jsonData)
+--     local dataTable, pos,err = json.decode(jsonData, 1, nil)
+--     if err then
+--         log.error(string.format("Failed to decode json: %s", err))
+--     else
+--         log.info(string.format("Decoded json: %s", utils.stringify_table(dataTable, nil, true)))
+--         self.objId_update(dataTable.objId)
+--         -- self.eye_update(dataTable.eye)
+--         -- self.finger_update(dataTable.finger)
+--         -- self.objNormalized_update(dataTable.objNormalized)
+--         self.trigger_update(dataTable.trigger)
+--         self.direction_update(dataTable.direction)
+--     end
+-- end
 
 function Listener:try_reconnect()
     local retries = 0
@@ -165,10 +160,19 @@ function Listener:start()
         return false
     end
     sock:settimeout(3)
-    local config = Config.default():protocol(""):keep_alive(30)
+    local config = Config.default():protocol(""):keep_alive(5)
     local websocket = ws.client(sock, "/", config)
     websocket:register_message_cb(function(msg)
-        self:handle_json_event(msg.data)
+        if msg ~= nil then
+            local dataTable, pos,err = json.decode(msg.data, 1, nil)
+            if err then
+                log.error(string.format("Failed to decode json: %s", err))
+            else
+                self.device:emit_event(capObjId.object(dataTable.objId))
+                self.device:emit_event(capTrigger.trigger(dataTable.trigger))
+                self.device:emit_event(capDirection.direction(dataTable.direction))
+            end
+        end
         -- log.debug(string.format("(%s:%s) Websocket message: %s", device.device_network_id, ip, utils.stringify_table(event, nil, true)))
     end):register_error_cb(function(err)
         -- TODO some muxing on the error conditions

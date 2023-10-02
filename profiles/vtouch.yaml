@@ -4,12 +4,6 @@ components:
     capabilities:
       - id: earthbench45333.object
         version: 1
-      - id: earthbench45333.eye
-        version: 1
-      - id: earthbench45333.finger
-        version: 1
-      - id: earthbench45333.objnormalizedxy
-        version: 1
       - id: earthbench45333.trigger
         version: 1
       - id: earthbench45333.direction
