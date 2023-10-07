@@ -86,19 +86,19 @@ end
 --     self.device:emit_event(capObjNormalized.XY( { normalizedXY.x, normalizedXY.y } ))
 -- end
 
--- function Listener:trigger_update(trigger)
---     local ip = self.device:get_field("ip")
---     log.info(string.format("[%s](%s) trigger_update: %s", ip,
---                                                  self.device.label, trigger))
---     self.device:emit_event(capTrigger.trigger(trigger))
--- end
+function Listener:trigger_update(trigger)
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) trigger_update: %s", ip,
+                                                 self.device.label, trigger))
+    self.device:emit_event(capTrigger.trigger(trigger))
+end
 
--- function Listener:direction_update(direction)
---     local ip = self.device:get_field("ip")
---     log.info(string.format("[%s](%s) direction_update: %s", ip,
---                                                  self.device.label, direction))
---     self.device:emit_event(capDirection.direction(direction))
--- end
+function Listener:direction_update(direction)
+    local ip = self.device:get_field("ip")
+    log.info(string.format("[%s](%s) direction_update: %s", ip,
+                                                 self.device.label, direction))
+    self.device:emit_event(capDirection.direction(direction))
+end
 
 -- function Listener:handle_json_event(jsonData)
 --     local dataTable, pos,err = json.decode(jsonData, 1, nil)
@@ -179,6 +179,9 @@ function Listener:start()
         log.error_with({hub_logs=true}, string.format("[%s](%s) Websocket error: %s", serial_number,
                                                         self.device.label, err))
         if err and (err:match("closed") or err:match("no response to keep alive ping commands")) then
+            self.device:emit_event(capObjId.object("null"))
+            self.device:emit_event(capTrigger.trigger("N"))
+            self.device:emit_event(capDirection.direction("N"))
             self.device:offline()
             self._status = false
             self:try_reconnect()
