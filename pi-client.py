@@ -1,6 +1,5 @@
 import asyncio
 import websockets
-import json
 
 async def client():
     async with websockets.connect('ws://192.168.137.100:20000') as websocket:

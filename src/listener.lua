@@ -36,6 +36,7 @@ local Listener = {}
 Listener.__index = Listener
 Listener.WS_PORT = 20000
 Listener._status = false
+Listener.deviceStatus = { objId = "null", trigger = "N", direction = "N"}
 Listener.funcTable = {
     ["objId"] = Listener.objId_update,
     -- ["eye"] = Listener.eye_update,
@@ -168,9 +169,18 @@ function Listener:start()
             if err then
                 log.error(string.format("Failed to decode json: %s", err))
             else
-                self.device:emit_event(capObjId.object(dataTable.objId))
-                self.device:emit_event(capTrigger.trigger(dataTable.trigger))
-                self.device:emit_event(capDirection.direction(dataTable.direction))
+                if(self.deviceStatus.objId ~= dataTable.objId) then
+                    self.device:emit_event(capObjId.object(dataTable.objId))
+                    self.deviceStatus.objId = dataTable.objId
+                end
+                if(self.deviceStatus.trigger ~= dataTable.trigger) then
+                    self.device:emit_event(capTrigger.trigger(dataTable.trigger))
+                    self.deviceStatus.trigger = dataTable.trigger
+                end
+                if(self.deviceStatus.direction ~= dataTable.direction) then
+                    self.device:emit_event(capDirection.direction(dataTable.direction))
+                    self.deviceStatus.direction = dataTable.direction
+                end
             end
         end
         -- log.debug(string.format("(%s:%s) Websocket message: %s", device.device_network_id, ip, utils.stringify_table(event, nil, true)))

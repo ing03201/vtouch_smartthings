@@ -32,54 +32,12 @@ local cosock = require "cosock"
 local net_utils = require "st.net_utils"
 local Listener = require "listener"
 local mdns = require "st.mdns"
+local disco = require "disco"
 
 local capObjId = capabilities["earthbench45333.object"]
 local capTrigger = capabilities["earthbench45333.trigger"]
 local capDirection = capabilities["earthbench45333.direction"]
 
-local function discovery_handler(driver, _, should_continue)
-    local SERVICE_TYPE = "_vtouch._tcp"
-    local DOMAIN = "local"
-    log.info("Starting discovery")
-    local mdns_responses, err = mdns.discover(SERVICE_TYPE, DOMAIN)
-    if err ~= nil then
-        log.error_with({hub_logs=true}, "Error discovering vtouch: " .. err)
-        return
-    end
-
-    for _, info in ipairs(mdns_responses.found) do 
-        if not net_utils.validate_ipv4_string(info.host_info.address) then
-            log.trace("Invalid IP address for vtouch device: " .. info.host_info.address)
-            return
-        end
-
-        if info.service_info.service_type ~= SERVICE_TYPE then
-            log.trace("Invalid service type for vtouch device: " .. info.service_info.service_type)
-            return
-        end
-
-        if info.service_info.domain ~= DOMAIN then
-            log.trace("Invalid domain for vtouch device: " .. info.service_info.domain)
-            return
-        end
-        local ip = info.host_info.address
-    
-        log.info(string.format("Discovered vtouch device at %s", ip))
-        local create_device_msg = assert(
-            driver:try_create_device({
-                type = "LAN",
-                device_network_id = ip ,
-                label = "Spatial Touch",
-                profile = "vtouch",
-                manufacturer = "VTouch",
-                model = "Spatial Touch",
-                vendor_provided_label = "VTouch",
-            }),
-            "failed to create device"
-        )
-    end
-    log.info("Ending discovery")
-end
 
 local function do_refresh(driver, device, cmd)
     -- get speaker playback state
@@ -186,7 +144,7 @@ local function info_changed(driver, device, event, args)
 end
 
 local vtouch = Driver("vtouch", {
-    discovery = discovery_handler,
+    discovery = disco.discover,
     lifecycle_handlers = {
         init = device_init,
         removed = device_removed,

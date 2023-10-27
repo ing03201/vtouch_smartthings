@@ -1,0 +1,10 @@
+[Unit]
+Description= websocket server service
+After=avahi-daemon.service
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/server.py
+Restart=always
+RestartSec=3
+[Install]
+WantedBy=multi-user.target

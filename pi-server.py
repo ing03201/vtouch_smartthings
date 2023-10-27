@@ -1,15 +1,24 @@
 import asyncio
 import websockets
-from websocket import create_connection
+from websocket import create_connection, WebSocketConnectionClosedException
+client = create_connection("ws://192.168.137.100:20000")
+def clientReConnect():
+    global client
+    client = create_connection("ws://192.168.137.100:20000")
 
 async def server(connected_client, path):
-    try:
-        while True:
+    while True:
+        try:
             data = client.recv()
-            # 데이터를 다른 서버로 전달
-            await connected_client.send(data)
-    except websockets.exceptions.ConnectionClosed:
-        pass
+        # 데이터를 다른 서버로 전달
+            if data:
+                await connected_client.send(data)
+        except websockets.exceptions.ConnectionClosed:
+            print("ConnectionClosed from client")
+            pass
+        except WebSocketConnectionClosedException:
+            print("ConnectionClosed from vps")
+            clientReConnect()
 
 if __name__ == "__main__":
     global client

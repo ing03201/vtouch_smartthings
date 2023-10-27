@@ -45,5 +45,14 @@ function utils.FileWrite(filePath, data, pretty)
         io.close(handle)
     end
 end
+function utils.has_value_in_table (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
 
 return utils
